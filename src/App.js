@@ -11,10 +11,17 @@ class App extends Component{
       allContacts: contacts,
       displayedContacts: contacts.slice(0,5)
     };
+    
     this.random = this.random.bind(this);
     this.sortName = this.sortName.bind(this);
-    this.sortPopularity = this.sortPopularity.bind(this)
+    this.sortPopularity = this.sortPopularity.bind(this);
+    this.search = this.search.bind(this)
   }
+
+  // We can use normal functions + bind OR arrow functions
+
+
+  /* ---------- RANDOM ADD ----------- */
 
   random = function() {
     let displayedContactsLength = this.state.displayedContacts.length;
@@ -31,6 +38,8 @@ class App extends Component{
       displayedContacts: newDisplayedContacts
     }); 
   }
+
+  /* ---------- SORT BY NAME ----------- */
 
   sortName = function() {
     // MAKE A TEMPORARY COPY OF ORIGINAL ARRAY!! BECAUSE WE ARE GOING TO MODIFY IT
@@ -57,6 +66,8 @@ class App extends Component{
     })
   }
 
+  /* ---------- SORT BY POPULARITY ----------- */
+
   sortPopularity = function() {
     let originalContacts = [...this.state.displayedContacts];
     
@@ -80,8 +91,22 @@ class App extends Component{
     })
   }
 
-  render() {
+  /* ---------- SEARCH ----------- */
 
+  search = function(e) {
+    let allDisplayedCelebrities = [...this.state.displayedContacts];
+    let searchedTerm = e.target.value; // element that trigered the Search function, that is: the input field
+    let searchedCelebrities = allDisplayedCelebrities.filter((celebrity) => (
+      celebrity.name.toLowerCase().indexOf(searchedTerm) >= 0
+    ))
+    this.setState({
+      displayedContacts: searchedCelebrities
+    })
+  }
+
+  /* ---------- MAIN RENDER ----------- */
+
+  render() {
     let contactComponents = this.state.displayedContacts.map((celebrity)=> {
       return (
         <Celebrity 
@@ -97,6 +122,7 @@ class App extends Component{
         <button onClick = {this.random}>Add random contact</button>
         <button onClick = {this.sortName}>Sort by Name</button>
         <button onClick = {this.sortPopularity}>Sort by Popularity</button>
+        <input onChange = {this.search} type="text" placeholder="search for celebrity"/>
         <table>
           <thead>
             <tr>
