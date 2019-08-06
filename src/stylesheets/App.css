@@ -31,3 +31,9 @@
     transform: rotate(360deg);
   }
 }
+
+.App table {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
