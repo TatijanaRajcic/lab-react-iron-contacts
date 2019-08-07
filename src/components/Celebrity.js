@@ -7,6 +7,7 @@ function Celebrity(props) {
       <td><img src={props.pictureUrl} alt="celebrity"/></td>
       <td>{props.name}</td>
       <td>{props.popularity}</td>
+      <td><button onClick={()=>{props.removeCelebrity(props.index)}}>Remove</button></td>
     </tr>
   )
 }

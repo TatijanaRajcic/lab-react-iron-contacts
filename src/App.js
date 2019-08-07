@@ -16,7 +16,8 @@ class App extends Component{
     this.random = this.random.bind(this);
     this.sortName = this.sortName.bind(this);
     this.sortPopularity = this.sortPopularity.bind(this);
-    this.search = this.search.bind(this)
+    this.search = this.search.bind(this);
+    this.removeCelebrity = this.removeCelebrity.bind(this);
   }
 
   // We can use normal functions + bind OR arrow functions
@@ -28,16 +29,17 @@ class App extends Component{
     let displayedContactsLength = this.state.displayedContacts.length;
 
     // slice one element from full list...
-    let newContact = this.state.allContacts.slice(displayedContactsLength, displayedContactsLength+1)[0];
+    let newContact = [...this.state.allContacts].slice(displayedContactsLength, displayedContactsLength+1)[0];
 
     //...and push it to displayed contacts in THREE STEPS:
     // 1) Make a copy of displayedContacts
     // 2) Push this new element to this copied array
-    let newDisplayedContacts = [...this.state.displayedContacts,newContact]
+    let newDisplayedContacts = [...this.state.displayedContacts,newContact];
+    let newAllContacts = [...this.state.finalContacts,newContact];
     // 3) in setState (which updates the original state), set the displayedContacts array equal to newDisplayedContacts
     this.setState({
       displayedContacts: newDisplayedContacts,
-      finalContacts: newDisplayedContacts
+      finalContacts: newAllContacts
     }); 
   }
 
@@ -49,8 +51,8 @@ class App extends Component{
     
     function compare(a, b) {
       // Use toUpperCase() to ignore character casing
-      let nameA = a.name.toUpperCase();
-      let nameB = b.name.toUpperCase();
+      let nameA = a.name.toLowerCase();
+      let nameB = b.name.toLowerCase();
     
       let comparison = 0;
       if (nameA >= nameB) {
@@ -64,8 +66,7 @@ class App extends Component{
     let sortedContacts = originalContacts.sort(compare);
 
     this.setState({
-      displayedContacts: sortedContacts,
-      finalContacts: sortedContacts
+      displayedContacts: sortedContacts
     })
   }
 
@@ -90,20 +91,18 @@ class App extends Component{
     let sortedContacts = originalContacts.sort(compare);
 
     this.setState({
-      displayedContacts: sortedContacts,
-      finalContacts: sortedContacts
+      displayedContacts: sortedContacts
     })
   }
 
   /* ---------- SEARCH ----------- */
 
   search = function(e) {
-    let allDisplayedCelebrities = [...this.state.displayedContacts];
     let searchedTerm = e.target.value; // element that trigered the Search function, that is: the input field
-    let final = this.state.finalContacts;
+    let allCelebrities = [...this.state.finalContacts];
 
     if (searchedTerm !== ""){
-      let searchedCelebrities = allDisplayedCelebrities.filter((celebrity) => (
+      let searchedCelebrities = allCelebrities.filter((celebrity) => (
         celebrity.name.toLowerCase().indexOf(searchedTerm) >= 0
       ))
       this.setState({
@@ -111,17 +110,36 @@ class App extends Component{
       })
     } else {
       this.setState({
-        displayedContacts: final
+        displayedContacts: allCelebrities
       })
     }
+  }
+
+  /* ---------- REMOVE CELEBRITY ----------- */
+
+  removeCelebrity = function(index) {
+    let displayedContactsAfterDelete = [...this.state.displayedContacts];
+
+    let deletedContactName = displayedContactsAfterDelete.splice(index, 1)[0].name;
+
+    let allContactsAfterDelete = [...this.state.finalContacts].filter((celebrity) => (
+      celebrity.name !== deletedContactName
+    ))
+    debugger
+    this.setState({
+      displayedContacts: displayedContactsAfterDelete,
+      finalContacts: allContactsAfterDelete
+    })
   }
 
   /* ---------- MAIN RENDER ----------- */
 
   render() {
-    let contactComponents = this.state.displayedContacts.map((celebrity)=> {
+    let contactComponents = this.state.displayedContacts.map((celebrity,index)=> {
       return (
         <Celebrity 
+          index={index}
+          removeCelebrity={this.removeCelebrity}
           name={celebrity.name} 
           pictureUrl={celebrity.pictureUrl}
           popularity={celebrity.popularity.toFixed(2)}
