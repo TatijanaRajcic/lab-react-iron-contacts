@@ -9,9 +9,10 @@ class App extends Component{
     super(props);
     this.state = {
       allContacts: contacts,
-      displayedContacts: contacts.slice(0,5)
+      displayedContacts: [...contacts].slice(0,5),
+      finalContacts: [...contacts].slice(0,5)
     };
-    
+
     this.random = this.random.bind(this);
     this.sortName = this.sortName.bind(this);
     this.sortPopularity = this.sortPopularity.bind(this);
@@ -35,7 +36,8 @@ class App extends Component{
     let newDisplayedContacts = [...this.state.displayedContacts,newContact]
     // 3) in setState (which updates the original state), set the displayedContacts array equal to newDisplayedContacts
     this.setState({
-      displayedContacts: newDisplayedContacts
+      displayedContacts: newDisplayedContacts,
+      finalContacts: newDisplayedContacts
     }); 
   }
 
@@ -56,13 +58,14 @@ class App extends Component{
       } else if (nameA <= nameB) {
         comparison = -1;
       }
-      return comparison;
+      return comparison; 
     }
     
     let sortedContacts = originalContacts.sort(compare);
 
     this.setState({
-      displayedContacts: sortedContacts
+      displayedContacts: sortedContacts,
+      finalContacts: sortedContacts
     })
   }
 
@@ -87,7 +90,8 @@ class App extends Component{
     let sortedContacts = originalContacts.sort(compare);
 
     this.setState({
-      displayedContacts: sortedContacts
+      displayedContacts: sortedContacts,
+      finalContacts: sortedContacts
     })
   }
 
@@ -96,12 +100,20 @@ class App extends Component{
   search = function(e) {
     let allDisplayedCelebrities = [...this.state.displayedContacts];
     let searchedTerm = e.target.value; // element that trigered the Search function, that is: the input field
-    let searchedCelebrities = allDisplayedCelebrities.filter((celebrity) => (
-      celebrity.name.toLowerCase().indexOf(searchedTerm) >= 0
-    ))
-    this.setState({
-      displayedContacts: searchedCelebrities
-    })
+    let final = this.state.finalContacts;
+
+    if (searchedTerm !== ""){
+      let searchedCelebrities = allDisplayedCelebrities.filter((celebrity) => (
+        celebrity.name.toLowerCase().indexOf(searchedTerm) >= 0
+      ))
+      this.setState({
+        displayedContacts: searchedCelebrities,
+      })
+    } else {
+      this.setState({
+        displayedContacts: final
+      })
+    }
   }
 
   /* ---------- MAIN RENDER ----------- */
